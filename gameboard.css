@@ -1,0 +1,46 @@
+#gameboard .row {
+    margin-bottom: 20px;
+}
+
+#gameboard .row .span1 {
+    height: 60px;
+    background-color: white;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+}
+
+#gameboard {
+    margin-left: 60px;
+    padding: 20px 20px 0px 20px;
+    background-color: #1B87E0;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+#move-btns {
+    margin-left: 60px;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+#move-btns .btn {
+    margin-left: 10px;
+}
+
+#red {
+    background-color: red;
+    height: 60px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+}
+
+#yellow {
+    background-color: yellow;
+    height: 60px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+}
