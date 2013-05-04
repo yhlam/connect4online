@@ -8,10 +8,11 @@
 #     last_col: The column of the last move of the user
 #
 # Return of the web service would be in the following format
-#     [RESULT] [STATE]
+#     [RESULT] [ROW] [COL]
 #
 #     RESULT := win | tie | lose | cont
-#     STATE  := The new state string of the game board after AI's move
+#     ROW := 0-6 (Only persent if AI has to move)
+#     COL := 0-5 (Only persent if AI has to move)
 
 
 use CGI qw(:standard);
@@ -36,23 +37,23 @@ $last_col = param("last_col");
 @state = parse_state($state_str);
 
 if(check_win(@state, $USER, $last_row, $last_col)) {
-    print "$WIN $state_str";
+    print "$WIN";
 }
 elsif(check_tie(@state, $USER, $last_row, $last_col)) {
-    print "$TIE $state_str";
+    print "$TIE";
 }
 else {
     ($row, $col, @new_state) = get_ai_move(@state, $USER, $last_row, $last_col);
     $new_state_str = format_state(@new_state);
 
     if(check_win(@new_state, $AI, $row, $col)) {
-        print "$LOSE $new_state_str";
+        print "$LOSE $row $col";
     }
     elsif(check_tie(@new_state, $AI, $row, $col)) {
-        print "$TIE $new_state_str";
+        print "$TIE $row $col";
     }
     else {
-        print "$CONTINUE $new_state_str";
+        print "$CONTINUE $row $col";
     }
 }
 
@@ -111,7 +112,7 @@ sub max_recurse {
             my($row, @new_state) = move(@state, $next_user, $col);
 
             my($min, $min_move) = min_recurse(@new_state, $next_user, $row, $col, $depth-1, $alpha, $beta);
-            if($min > $score) {
+            if($min >= $score) {
                 $score = $min;
                 $best_move = $col;
             }
@@ -159,7 +160,7 @@ sub min_recurse {
             my($row, @new_state) = move(@state, $next_user, $col);
 
             my($max, $max_move) = max_recurse(@new_state, $next_user, $row, $col, $depth-1, $alpha, $beta);
-            if($max < $score) {
+            if($max <= $score) {
                 $score = $max;
                 $best_move = $col;
             }
