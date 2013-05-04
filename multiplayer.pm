@@ -1,7 +1,5 @@
 #!/usr/local/bin/perl5 -w
 
-use CGI qw (:standard -debug);
-use CGI qw (:standard);
 use DBI;
 
 $db_name = "102251db";
@@ -12,17 +10,9 @@ $password="123456";
 $dsn = "DBI:mysql:$db_name:$mysql_hostname";
 $dbh = DBI->connect($dsn, $user, $password);
 
-print header();
-print start_html("DB Connection Testing");
-
 if ( !defined $dbh ) {
 	die "Cannot connect to MySQL server: $DBI::errstr\n";
 }
-else{
-print h1("DB connection succeeded");
-}
-
-print h1("insert record trial");
 
 # functions usage sample:
 
@@ -48,37 +38,32 @@ print h1("insert record trial");
 #	print h1("new state: $newState");
 # }
 
-print end_html();
-
 # This function will open a new game in DB, setting the game state to all 0
 # and all user update flag to 0
 # input: nothing
-# output: gameID
+# output: gameID (undef if there is an error)
 sub createGame{
-	$state = "000000000000000000000000000000000000000000";
+	my $state = "000000000000000000000000000000000000000000";
 	my $sth = $dbh->prepare("INSERT INTO comp2021 (current, user1, user2) VALUES ('$state',0,0);"); 
-	$result=$sth->execute();
+	my $result=$sth->execute();
 	if($result!=0){
-		print h1("Insert Record Function is OK");
-		print h1($result);
 		$gameID=$sth->{mysql_insertid};
 		return $gameID;
-	}
-	else{
-		print h1("Insert Record Function Failed");
 	}
 }
 
 # This function will join the game by retrieving the current game state
 # input arguments: gameID
-# return arguments: current state of the game string
+# return arguments: current state of the game string (undef if the no corresponding game ID is found)
 sub joinGame{
-	$gameID = $_[0];
-	print h1("gameID: $gameID");
+	my $gameID = $_[0];
 	my $sth = $dbh->prepare("SELECT current FROM comp2021 WHERE gameID = '$gameID';");
-	$result=$sth->execute();
-	@game = $sth->fetchrow_array();
-	return $game[0];
+	my $result=$sth->execute();
+	my @game = $sth->fetchrow_array();
+
+        if(@game) {
+	        return $game[0];
+        }
 }
 
 # This function will send the updated state of the gameboard
@@ -88,19 +73,17 @@ sub joinGame{
 # return value: 1 for successful, 0 for fail
 sub updateState{
 	
-	$gameID = $_[0];
-	$role = $_[1];
-	$updatedState = $_[2];
+	my $gameID = $_[0];
+	my $role = $_[1];
+	my $updatedState = $_[2];
 	my $sth;
 	if ($role == 1){
-		print h1("case 1");
 		$sth = $dbh->prepare("UPDATE comp2021 SET current = '$updatedState', user1='1' WHERE gameID = '$gameID';");
 	}
 	elsif ($role == 2){
-		print h1("case 2");
 		$sth = $dbh->prepare("UPDATE comp2021 SET current = '$updatedState', user2='1' WHERE gameID = '$gameID';");
 	}		 
-	$result=$sth->execute();
+	my $result=$sth->execute();
 
 	if ($result == 1){
 		return 1;
@@ -118,11 +101,11 @@ sub updateState{
 # role: 1 for game opener, 2 for game joiner
 # return value: updated current state(if opponent have updated) or undef(if opponent hvnt updated)
 sub retrieveState{
-	$gameID = $_[0];
-	$role = $_[1];
+	my $gameID = $_[0];
+	my $role = $_[1];
 	
-	$gameID = $_[0];
-	$role = $_[1];
+	my $gameID = $_[0];
+	my $role = $_[1];
 
 	if ($role == 1){
 		$sth = $dbh->prepare("SELECT current FROM comp2021 WHERE gameID = '$gameID' AND user2 = '1';");
@@ -130,9 +113,9 @@ sub retrieveState{
 	elsif ($role == 2){
 		$sth = $dbh->prepare("SELECT current FROM comp2021 WHERE gameID = '$gameID' AND user1 = '1';");
 	}		 
-	$result=$sth->execute();
+	my $result=$sth->execute();
 
-	if (@row=$sth->fetchrow_array()){
+	if (my @row=$sth->fetchrow_array()){
 		if ($role == 1){
 			$sth = $dbh->prepare("UPDATE comp2021 SET user2 ='0' WHERE gameID = '$gameID';");
 		}
@@ -146,3 +129,5 @@ sub retrieveState{
 		return undef;
 	}
 }
+
+1;
