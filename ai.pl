@@ -207,55 +207,87 @@ sub heuristic {
     foreach my $row (0 .. $ROW_NUM-1) {
         foreach my $col (0 .. $COL_NUM-1) {
             my $value = $state[$row * $COL_NUM + $col];
-            if($value eq $AI) {
+            if($value ne $USER) {
                 my($i, $j);
 
                 # horizontal
                 my $count = 1;
-                for($j=$col+1; $j<$COL_NUM && $j<$col+$CONNECT && $state[$row * $COL_NUM + $j] eq $AI; $j++) {
-                    $count++;
-                }
-                for($j=$col-1; $j>=0 && $j>$col-$CONNECT && $state[$row * $COL_NUM + $j] eq $AI; $j--) {
+                my $value_added = $value eq $AI ? 2 : 1;
+                for($j=$col+1; $j<$COL_NUM && $j<$col+$CONNECT; $j++) {
+                    $cell = $state[$row * $COL_NUM + $j];
+                    if($cell eq $USER) {
+                        last;
+                    }
+                    elsif($cell eq $AI) {
+                        $value_added += 2;
+                    }
+                    else {
+                        $value_added += 1;
+                    }
                     $count++;
                 }
                 if($count >= $CONNECT) {
-                    $score += $count - $CONNECT +1;
+                    $score += $value_added;
                 }
 
                 # vertical
                 $count = 1;
-                for($i=$row+1; $i<$ROW_NUM && $i<$row+$CONNECT && $state[$i * $COL_NUM + $col] eq $AI; $i++) {
-                    $count++;
-                }
-                for($i=$row-1; $i>=0 && $i>$row-$CONNECT && $state[$i * $COL_NUM + $col] eq $AI; $i--) {
+                $value_added = $value eq $AI ? 2 : 1;
+                for($i=$row+1; $i<$ROW_NUM && $i<$row+$CONNECT; $i++) {
+                    $cell = $state[$i * $COL_NUM + $col];
+                    if($cell eq $USER) {
+                        last;
+                    }
+                    elsif($cell eq $AI) {
+                        $value_added += 2;
+                    }
+                    else {
+                        $value_added += 1;
+                    }
                     $count++;
                 }
                 if($count >= $CONNECT) {
-                    $score += $count - $CONNECT +1;
+                    $score += $value_added;
                 }
 
                 # diag
                 $count = 1;
-                for($i=$row-1, $j=$col+1; $i>=0 && $i>$row-$CONNECT && $j<$COL_NUM && $j<$col+$CONNECT && $state[$i*$COL_NUM+$j] eq $AI; $i--, $j++) {
-                    $count++;
-                }
-                for($i=$row+1, $j=$col-1; $i>=0 && $i<$ROW_NUM && $i<$row+$CONNECT && $j>=0 && $j>$col-$CONNECT && $state[$i*$COL_NUM+$j] eq $AI; $i++, $j--) {
+                $value_added = $value eq $AI ? 2 : 1;
+                for($i=$row-1, $j=$col+1; $i>=0 && $i>$row-$CONNECT && $j<$COL_NUM && $j<$col+$CONNECT; $i--, $j++) {
+                    $cell = $state[$i*$COL_NUM+$j];
+                    if($cell eq $USER) {
+                        last;
+                    }
+                    elsif($cell eq $AI) {
+                        $value_added += 2;
+                    }
+                    else {
+                        $value_added += 1;
+                    }
                     $count++;
                 }
                 if($count >= $CONNECT) {
-                    $score += $count - $CONNECT + 1;
+                    $score += $value_added;
                 }
 
                 # back diag
                 $count = 1;
-                for($i=$row+1, $j=$col+1; $i<$ROW_NUM && $i<$row+$CONNECT && $j<$COL_NUM && $j<$col+$CONNECT && $state[$i*$COL_NUM+$j] eq $AI; $i++, $j++) {
-                    $count++;
-                }
-                for($i=$row-1, $j=$col-1; $i>=0 && $i>$row-$CONNECT && $j>=0 && $j>$col-$CONNECT && $state[$i*$COL_NUM+$j] eq $AI; $i--, $j--) {
+                $value_added = $value eq $AI ? 2 : 1;
+                for($i=$row+1, $j=$col+1; $i<$ROW_NUM && $i<$row+$CONNECT && $j<$COL_NUM && $j<$col+$CONNECT; $i++, $j++) {
+                    $cell = $state[$i*$COL_NUM+$j];
+                    if($cell eq $USER) {
+                        last;
+                    }
+                    elsif($cell eq $AI) {
+                        $value_added += 2;
+                    }
+                    else {
+                        $value_added += 1;
+                    }
                     $count++;
                 }
                 if($count >= $CONNECT) {
-                    $score += $count - $CONNECT + 1;
+                    $score += $value_added;
                 }
             }
         }
