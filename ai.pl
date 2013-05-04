@@ -111,6 +111,11 @@ sub max_recurse {
         if(valid_move(@state, $col)) {
             my($row, @new_state) = move(@state, $next_user, $col);
 
+            if(check_win(@new_state, $next_user, $row, $col)) {
+                $score = "+inf";
+                $best_move = $col;
+            }
+
             my($min, $min_move) = min_recurse(@new_state, $next_user, $row, $col, $depth-1, $alpha, $beta);
             if($min >= $score) {
                 $score = $min;
@@ -158,6 +163,11 @@ sub min_recurse {
     foreach my $col (0 .. $COL_NUM-1) {
         if(valid_move(@state, $col)) {
             my($row, @new_state) = move(@state, $next_user, $col);
+
+            if(check_win(@new_state, $next_user, $row, $col)) {
+                $score = "-inf";
+                $best_move = $col;
+            }
 
             my($max, $max_move) = max_recurse(@new_state, $next_user, $row, $col, $depth-1, $alpha, $beta);
             if($max <= $score) {
