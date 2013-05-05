@@ -24,6 +24,14 @@ function move(row, col,player) {
         player=='1'?cell.css('background-color', USER_COLOR):cell.css('background-color', USER2_COLOR);
 		player=='1'?state[row*(COL_NUM)+col]=1:state[row*(COL_NUM)+col*1]=2;
         
+		//disable button if no empty row
+		var btn = $('#btn'+col);
+		if (row== 0){
+			btn.attr('disabled', 'disabled');
+			btn.addClass('disabled');
+			btn.hide();
+		}
+
 		if($row < row) {
             $row++;
             setTimeout(color, COLOR_TIME);
@@ -58,11 +66,9 @@ function available_row(col){
 			return row;
 		}
 	}
-	//disable button if no empty row
-	var btn = $('#btn'+col);
-	btn.attr('disabled', 'disabled');
-	btn.addClass('disabled');
+
 }
+
 
 
 
@@ -91,7 +97,7 @@ for(var i=0; i<btns.length; i++) {
 				var next_move =success[0];
 				var move_row = success[1];
 				var move_col = success[2];
-				
+
 				if (next_move == CONTINUE){
 
 					move(move_row,move_col,'2');
