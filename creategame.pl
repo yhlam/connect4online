@@ -10,6 +10,7 @@ use multiplayer;
 
 print header();
 
-$gameid = createGame();
+$user = param("user");
+$gameid = createGame($user);
 
 print $gameid;

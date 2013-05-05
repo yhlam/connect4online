@@ -3,7 +3,7 @@
 # The join game web service
 #
 # Input parameter: gameid
-# Return: current state of the game string (Empty string if the no corresponding game ID is found)
+# Return: Creator of the game (Empty string if the no corresponding game ID is found)
 
 use CGI qw(:standard);
 use multiplayer;
@@ -11,6 +11,7 @@ use multiplayer;
 print header();
 
 $gameid = param('gameid');
-$state = joinGame($gameid);
+$user = param('user');
+$creator = joinGame($gameid, $user);
 
-print $state;
+print $creator;

@@ -6,6 +6,7 @@
 #   gameid
 #   role        1 for game opener, 2 for game joiner
 #   state
+#   user
 # return value: 1 for successful, 0 for fail
 
 
@@ -16,7 +17,8 @@ print header();
 
 $gameid = param('gameid');
 $role = param('role');
-$state = param('state'); 
+$state = param('state');
+$user = param('user');
 
-$result = updateState($gameid, $role, $state);
+$result = updateState($gameid, $role, $state, $user);
 print $result;

@@ -17,5 +17,7 @@ print header();
 $gameid = param('gameid');
 $role = param('role');
 
-$state = retrieveState($gameid, $role);
-print $state;
+@result = retrieveState($gameid, $role);
+if(@result) {
+    print "@result";
+}

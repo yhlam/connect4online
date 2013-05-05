@@ -44,3 +44,15 @@
     -moz-border-radius: 25px;
     border-radius: 25px;
 }
+
+#modal-header {
+    display: none;
+}
+
+#modal-footer {
+    display: none;
+}
+
+#err-msg {
+    display: none;
+}
