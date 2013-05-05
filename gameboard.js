@@ -3,6 +3,8 @@ var COL_NUM = 7;
 var USER_COLOR = 'red';
 var USER2_COLOR= 'yellow';
 var EMPTY_COLOR= 'white';
+var CONTINUE ='cont';
+var TIE ='tie';
 var COLOR_TIME = 100;
 var state = new Array(ROW_NUM*COL_NUM);
 //Init the state
@@ -20,7 +22,7 @@ function move(row, col,player) {
         var cell = $('#cell'+$row+col);
 		
         player=='1'?cell.css('background-color', USER_COLOR):cell.css('background-color', USER2_COLOR);
-		player=='1'?state[row*(COL_NUM)+col]=1:state[row*(COL_NUM)+col]=2;
+		player=='1'?state[row*(COL_NUM)+col]=1:state[row*(COL_NUM)+col*1]=2;
         
 		if($row < row) {
             $row++;
@@ -39,6 +41,7 @@ function available_row(col){
 	}
 	//disable button if no empty row
 	var btn = $('#btn'+col);
+	btn.attr('disabled', 'disabled');
 	btn.addClass('disabled');
 }
 
@@ -47,9 +50,11 @@ for(var i=0; i<btns.length; i++) {
     var btn = $(btns[i]);
     btn.click(function(col) {
        return  function() {
+
 		for(var j=0; j<btns.length; j++){
-			var button= $(btns[j]);
-			button.addClass('disabled');
+			var btn= $(btns[j]);
+			btn.attr('disabled', 'disabled');
+			btn.addClass('disabled');
 		}
 	   
 		var next_row = available_row(col);
@@ -66,18 +71,26 @@ for(var i=0; i<btns.length; i++) {
 			},
 			success: function(success){
 				var success=success.split(" ");
-				var result =success[0];
-				var updated_state=success[1];
-				for (var k=0;k<ROW_NUM*COL_NUM;k++){
-					if(updated_state.charAt(k)!=state[k]){
-						move(Math.floor(k/COL_NUM),k%COL_NUM,'2');
-						for(var j=0; j<btns.length; j++){
-							var button= $(btns[j]);
-							button.removeClass('disabled');
-						}
-					}
+				var next_move =success[0];
+				if (next_move == CONTINUE){
+					var move_row = success[1];
+					var move_col = success[2];
+				}else if (next_move == TIE){
+					var console=$('#console h3:first');
+					console.text("Draw Game!");
+				}else{
+					var console=$('#console h3:first');
+					console.text("You "+next_move+"!!");
 				}
-			
+				// AI make the move
+				move(move_row,move_col,'2');
+
+				for(var j=0; j<btns.length; j++){
+						var btn= $(btns[j]);
+						btn.removeAttr('disabled');
+						btn.removeClass('disabled');
+				}
+				
 			},
 			error: function(error){
 				alert("Error occurs!"+error);

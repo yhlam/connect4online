@@ -20,7 +20,9 @@ print <<HTML_PART1;
             <div class="navbar-inner">
                 <a class="brand" href="#">Connect Four Online</a>
                 <ul class="nav">
-                    <li class="active"><a href="#">Game</a></li>
+                    <li class="active"><a href="#">VS Comp</a></li>
+                    <li><a href="#">Create Game</a></li>
+                    <li><a href="#">Join Game</a></li>
                     <li><a href="#">Rules</a></li>
                 </ul>
             </div>
@@ -38,6 +40,11 @@ print <<HTML_PART1;
                     <div class="row">
                         <div id="yellow" class="span1"></div>
                         <div class="span2"><h3>Computer</h3></div>
+                    </div>
+                    <div class="row">
+                        <div id="console" class ="span1">
+                        <div class="span2"><h1></h1></div>
+                        </div>
                     </div>
                 </div>
                 <div class="span9">
