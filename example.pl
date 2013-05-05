@@ -27,7 +27,7 @@ sub print_state{
     foreach my $row (0 .. $ROW_NUM-1) {
         foreach my $col (0 .. $COL_NUM-1) {
             my $pos = $row * $COL_NUM + $col;
-            my $value = @state[$pos];
+            my $value = $state[$pos];
             if($value eq $EMPTY) {
                 print " ";
             }
