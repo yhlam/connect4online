@@ -12,13 +12,31 @@
 
 use CGI qw(:standard);
 use multiplayer;
+use state;
 
 print header();
 
+$WIN = "win";
+$TIE = "tie";
+$CONTINUE = "cont";
+
 $gameid = param('gameid');
 $role = param('role');
-$state = param('state');
+$state_str = param('state');
 $user = param('user');
+$row = param('row');
+$col = param('col');
 
-$result = updateState($gameid, $role, $state, $user);
-print $result;
+if(updateState($gameid, $role, $state_str, $user)) {
+    @state = parse_state($state_str);
+    if(check_win(@state, $role, $row, $col)) {
+        print "$WIN";
+    }
+    elsif(check_tie(@state, $role, $row, $col)) {
+        print "$TIE";
+    }
+    else {
+        print "$CONTINUE";
+    }
+    
+}

@@ -44,8 +44,24 @@ else {
         'role': role,
         'state': state.join(""),
         'user': user,
+        'row': next_row,
+        'col': col,
 DATA
-    $ajax_success = "";
+    $ajax_success = <<SUCCESS;
+        if (success == 'win'){
+                var console=\$('#console h1:first');
+                console.text("You win!");
+                disable_buttons();
+        }
+        else if(success == TIE) {
+                var console=\$('#console h1:first');
+                console.text("Draw Game!");
+                disable_buttons();
+        }
+        else {
+            resume_buttons();
+        }
+SUCCESS
     if($mode eq "create") {
         $user1 = $user;
         $user2 = "";
@@ -239,13 +255,16 @@ var timer = setInterval(function() {
         url: 'getstate.pl',
         data: {
             gameid: gameid,
-            role: role
+            role: role,
+            state: state.join('')
         },
         success: function(success){
             if(success) {
                 var success=success.split(" ");
-                var newstate = success[0];
-                var opponent = success[1];
+                var opponent = success[0];
+                var result = success[1];
+                var r = parseInt(success[2]);
+                var c = parseInt(success[3]);
 
                 if(hideModal) {
                     \$('#modal').modal('hide');
@@ -253,19 +272,21 @@ var timer = setInterval(function() {
                     hideModal = false;
                 }
 
-                for(var i=0; i<newstate.length; i++) {
-                    var value = parseInt(newstate[i]);
-                    if(value != state[i]) {
-                        var r = Math.floor(i / COL_NUM);
-                        var c = i % COL_NUM;
-                        if(role == '1') {
-                            move(r, c, '2');
-                        }
-                        else {
-                            move(r, c, '1');
-                        }
-                        resume_buttons();
-                    }
+                if(role == '1') {
+                    move(r, c, '2');
+                }
+                else {
+                    move(r, c, '1');
+                }
+
+                if (result == CONTINUE){
+                    resume_buttons();
+                }else if (result == TIE){
+                    var console=\$('#console h1:first');
+                    console.text("Draw Game!");
+                }else{				
+                    var console=\$('#console h1:first');
+                    console.text("You "+result+"!!");
                 }
             }
         },
