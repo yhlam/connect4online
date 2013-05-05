@@ -41,10 +41,9 @@ print <<HTML_PART1;
                         <div id="yellow" class="span1"></div>
                         <div class="span2"><h3>Computer</h3></div>
                     </div>
+                    <div class="row"></div>
                     <div class="row">
-                        <div id="console" class ="span1">
-                        <div class="span2"><h1></h1></div>
-                        </div>
+                        <div id="console" class="span3"><h1></h1></div>
                     </div>
                 </div>
                 <div class="span9">

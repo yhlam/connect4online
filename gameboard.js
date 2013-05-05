@@ -33,6 +33,25 @@ function move(row, col,player) {
     color();
 }
 
+
+function disable_buttons(){
+	var btns = $("#move-btns .btn");
+	for(var i=0; i<btns.length; i++){
+			var btn= $(btns[i]);
+			btn.attr('disabled', 'disabled');
+			btn.addClass('disabled');
+		}
+}
+
+function resume_buttons(){
+	var btns = $("#move-btns .btn");
+	for(var i=0; i<btns.length; i++){
+		var btn= $(btns[i]);
+		btn.removeAttr('disabled');
+		btn.removeClass('disabled');
+	}
+}
+
 function available_row(col){
 	for (var row=ROW_NUM-1; row>=0; row--){	
 		if(state[row*(COL_NUM)+col]==0){
@@ -45,17 +64,15 @@ function available_row(col){
 	btn.addClass('disabled');
 }
 
+
+
 var btns = $("#move-btns .btn");
 for(var i=0; i<btns.length; i++) {
     var btn = $(btns[i]);
     btn.click(function(col) {
        return  function() {
 
-		for(var j=0; j<btns.length; j++){
-			var btn= $(btns[j]);
-			btn.attr('disabled', 'disabled');
-			btn.addClass('disabled');
-		}
+		disable_buttons();
 	   
 		var next_row = available_row(col);
 		
@@ -72,24 +89,24 @@ for(var i=0; i<btns.length; i++) {
 			success: function(success){
 				var success=success.split(" ");
 				var next_move =success[0];
+				var move_row = success[1];
+				var move_col = success[2];
+				
 				if (next_move == CONTINUE){
-					var move_row = success[1];
-					var move_col = success[2];
+
+					move(move_row,move_col,'2');
+					resume_buttons();
 				}else if (next_move == TIE){
-					var console=$('#console h3:first');
+					var console=$('#console h1:first');
 					console.text("Draw Game!");
-				}else{
-					var console=$('#console h3:first');
+				}else{				
+					if(move_row && move_col){
+					move(move_row,move_col,'2');}
+
+					var console=$('#console h1:first');
 					console.text("You "+next_move+"!!");
 				}
-				// AI make the move
-				move(move_row,move_col,'2');
 
-				for(var j=0; j<btns.length; j++){
-						var btn= $(btns[j]);
-						btn.removeAttr('disabled');
-						btn.removeClass('disabled');
-				}
 				
 			},
 			error: function(error){
