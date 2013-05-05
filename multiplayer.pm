@@ -17,7 +17,7 @@ if ( !defined $dbh ) {
 # functions usage sample:
 
 # create game sample:
-# my $gameID=createGame();
+# my $gameID=createGame("comp2021");
 # print h1($gameID);
 
 # join game sample:
@@ -26,7 +26,7 @@ if ( !defined $dbh ) {
 
 # update current state sample:
 # my $new = "000000000000000000000000000000000000012345";
-# $updateResult= updateState(6,1,$new);
+# $updateResult= updateState(6,1,$new, "stupid");
 # print h1("update result: $updateResult");
 
 # retrieve new state sample:
@@ -40,11 +40,12 @@ if ( !defined $dbh ) {
 
 # This function will open a new game in DB, setting the game state to all 0
 # and all user update flag to 0
-# input: nothing
+# input: username
 # output: gameID (undef if there is an error)
 sub createGame{
 	my $state = "000000000000000000000000000000000000000000";
-	my $sth = $dbh->prepare("INSERT INTO comp2021 (current, user1, user2) VALUES ('$state',0,0);"); 
+        my $username = $_[0];
+	my $sth = $dbh->prepare("INSERT INTO comp2021 (current, user1, user2, lastmover) VALUES ('$state',0,0, '$username');"); 
 	my $result=$sth->execute();
 	if($result!=0){
 		$gameID=$sth->{mysql_insertid};
@@ -57,7 +58,7 @@ sub createGame{
 # return arguments: current state of the game string (undef if the no corresponding game ID is found)
 sub joinGame{
 	my $gameID = $_[0];
-	my $sth = $dbh->prepare("SELECT current FROM comp2021 WHERE gameID = '$gameID';");
+	my $sth = $dbh->prepare("SELECT lastmover FROM comp2021 WHERE gameID = '$gameID';");
 	my $result=$sth->execute();
 	my @game = $sth->fetchrow_array();
 
@@ -68,7 +69,7 @@ sub joinGame{
 
 # This function will send the updated state of the gameboard
 # and also set the flag to indicate updated a step
-# input arguments: gameID, role, updated state string
+# input arguments: gameID, role, updated state string, username
 # role: 1 for game opener, 2 for game joiner
 # return value: 1 for successful, 0 for fail
 sub updateState{
@@ -76,12 +77,13 @@ sub updateState{
 	my $gameID = $_[0];
 	my $role = $_[1];
 	my $updatedState = $_[2];
+        my $username = $_[3];
 	my $sth;
 	if ($role == 1){
-		$sth = $dbh->prepare("UPDATE comp2021 SET current = '$updatedState', user1='1' WHERE gameID = '$gameID';");
+                $sth = $dbh->prepare("UPDATE comp2021 SET current = '$updatedState', user1='1', lastmover= '$username' WHERE gameID = '$gameID';");
 	}
 	elsif ($role == 2){
-		$sth = $dbh->prepare("UPDATE comp2021 SET current = '$updatedState', user2='1' WHERE gameID = '$gameID';");
+                $sth = $dbh->prepare("UPDATE comp2021 SET current = '$updatedState', user2='1', lastmover= '$username' WHERE gameID = '$gameID';");
 	}		 
 	my $result=$sth->execute();
 
@@ -104,14 +106,11 @@ sub retrieveState{
 	my $gameID = $_[0];
 	my $role = $_[1];
 	
-	my $gameID = $_[0];
-	my $role = $_[1];
-
 	if ($role == 1){
-		$sth = $dbh->prepare("SELECT current FROM comp2021 WHERE gameID = '$gameID' AND user2 = '1';");
+            $sth = $dbh->prepare("SELECT current,lastmover FROM comp2021 WHERE gameID = '$gameID' AND user2 = '1';");
 	}
 	elsif ($role == 2){
-		$sth = $dbh->prepare("SELECT current FROM comp2021 WHERE gameID = '$gameID' AND user1 = '1';");
+            $sth = $dbh->prepare("SELECT current,lastmover FROM comp2021 WHERE gameID = '$gameID' AND user1 = '1';");
 	}		 
 	my $result=$sth->execute();
 
@@ -123,7 +122,7 @@ sub retrieveState{
 			$sth = $dbh->prepare("UPDATE comp2021 SET user1 ='0' WHERE gameID = '$gameID';");
 		}		 
 		$result=$sth->execute();
-		return $row[0];
+		return $row[0], $row[1];
 	}
 	else {
 		return undef;
