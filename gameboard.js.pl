@@ -102,10 +102,10 @@ function move(row, col,player) {
         player=='1'?state[row*(COL_NUM)+col]=1:state[row*(COL_NUM)+col*1]=2;
 
         //disable button if no empty row
-        var btn = \$('#btn'+colol);
+        var btn = \$('#btn'+col);
         if (row== 0){
             btn.attr('disabled', 'disabled');
-            btn.addClassss('disabled');
+            btn.addClass('disabled');
             btn.hide();
         }
         
