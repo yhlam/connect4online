@@ -22,7 +22,6 @@ DATA
         var move_col = success[2];
         
         if (next_move == CONTINUE){
-
                 move(move_row,move_col,'2');
                 resume_buttons();
         }else if (next_move == TIE){
@@ -57,9 +56,6 @@ DATA
                 var console=\$('#console h1:first');
                 console.text("Draw Game!");
                 disable_buttons();
-        }
-        else {
-            resume_buttons();
         }
 SUCCESS
     if($mode eq "create") {
@@ -284,9 +280,11 @@ var timer = setInterval(function() {
                 }else if (result == TIE){
                     var console=\$('#console h1:first');
                     console.text("Draw Game!");
+                    disable_buttons();
                 }else{				
                     var console=\$('#console h1:first');
                     console.text("You "+result+"!!");
+                    disable_buttons();
                 }
             }
         },
